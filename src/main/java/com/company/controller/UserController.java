@@ -25,7 +25,6 @@ public class UserController {
         return userInter.getById(id);
     }
 
-    // We don't use entity as DTO in real life projects
     @PostMapping
     public void saveUser(@RequestBody User user) {
         userInter.saveUser(user);
