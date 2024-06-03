@@ -25,9 +25,19 @@ public class UserController {
         return userInter.getById(id);
     }
 
+    @GetMapping("/{id}/clear")
+    public void clearCache(@PathVariable Long id){
+        userInter.clearCache(id);
+    }
+
     @PostMapping
     public void saveUser(@RequestBody User user) {
         userInter.saveUser(user);
+    }
+
+    @PutMapping
+    public void updateUser(@RequestBody User user) {
+        userInter.updateUser(user);
     }
 
     @DeleteMapping("/{id}")

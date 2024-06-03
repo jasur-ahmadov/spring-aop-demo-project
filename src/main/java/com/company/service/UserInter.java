@@ -14,4 +14,8 @@ public interface UserInter {
     User saveUser(User user);
 
     void deleteUserById(Long id);
+
+    void clearCache(Long id);
+
+    void updateUser(User user);
 }

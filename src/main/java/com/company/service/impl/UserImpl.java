@@ -8,11 +8,13 @@ import com.company.mapper.UserMapper;
 import com.company.repository.UserRepository;
 import com.company.service.UserInter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +44,27 @@ public class UserImpl implements UserInter {
                 .map(userMapper::toDto)
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+    }
+
+    @CacheEvict(value = "users:id", key = "#id")
+    public void clearCache(Long id) {
+        System.err.println("Clearing hash key");
+    }
+
+    @Scheduled(fixedRate = 10_000)
+    @CacheEvict(value = "users:id", allEntries = true)
+    public void clearCache() {
+        System.err.println("Clearing all entries per 10 seconds");
+    }
+
+    @Override
+    @CacheEvict(value = "users", key = "#user.id")
+    public void updateUser(User user) {
+        System.err.println("Inside updateUser method");
+        Optional.ofNullable(user.getId())
+                .flatMap(userRepository::findById)
+                .map(userRepository::save)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + user.getId()));
     }
 
     @Override
